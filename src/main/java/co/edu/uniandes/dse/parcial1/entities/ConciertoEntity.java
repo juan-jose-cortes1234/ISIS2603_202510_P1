@@ -3,6 +3,7 @@ package co.edu.uniandes.dse.parcial1.entities;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
@@ -15,5 +16,6 @@ public class ConciertoEntity extends BaseEntity {
     private LocalDateTime fechaConcierto;
     private int aforo;
 
-    
-}
+    @ManyToOne
+    private EstadioEntity estadioAsignado;
+}   
