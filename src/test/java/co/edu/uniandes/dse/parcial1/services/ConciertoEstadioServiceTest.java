@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import co.edu.uniandes.dse.parcial1.entities.ConciertoEntity;
 import co.edu.uniandes.dse.parcial1.entities.EstadioEntity;
 import co.edu.uniandes.dse.parcial1.exceptions.IllegalOperationException;
+import co.edu.uniandes.dse.parcial1.repositories.ConciertoRepository;
 import jakarta.transaction.Transactional;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -32,8 +34,13 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 public class ConciertoEstadioServiceTest {
     
     @Autowired
+    private ConciertoRepository conciertoRepository;
+    
+    @Autowired
 	private ConciertoService conciertoService;
 
+    @Autowired
+    private ConciertoEstadioService conciertoEstadioService;
 	
 
 	private PodamFactory factory = new PodamFactoryImpl();
@@ -67,11 +74,26 @@ public class ConciertoEstadioServiceTest {
 	 * Inserta los datos iniciales para el correcto funcionamiento de las pruebas.
 	 */
 	private void insertData() {
-		estadio = factory.manufacturePojo(EstadioEntity.class);
+		
+        concierto = factory.manufacturePojo(ConciertoEntity.class);
+        concierto.setFechaConcierto(LocalDateTime.now().plusDays(4));
+        concierto.setEstadioAsignado(estadio);
+        concierto.setAforo(90);
+        entityManager.persist(concierto);
+
+        estadio = factory.manufacturePojo(EstadioEntity.class);
         estadio.setCapacidadMax(100);
         estadio.setNombreCiudad("lituania");
+        
         entityManager.persist(estadio);
         
 	}
+
+    @Test
+    public void asignarConciertoAEstadioTest() throws IllegalOperationException
+    {
+        conciertoEstadioService.asignarConciertoAEstadio(concierto.getId(), estadio.getId());
+
+    }
 
 }
